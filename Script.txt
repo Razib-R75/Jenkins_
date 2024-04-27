@@ -4,31 +4,26 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
-                script {
-                     Debugging step Print Git remote URLs
-                    bat 'git remote -v'
-                }
-                git branch 'main',credentialsId 'fffcab88-403a-4ab2-b241-fd90e1e372ec', url 'httpsgitlab.comqups1automation.git'
+                echo 'Debugging step: Print Git remote URLs'
+                checkout([$class: 'GitSCM',
+                          branches: [[name: 'main']],
+                          userRemoteConfigs: [[url: 'https://gitlab.com/qups1/automation.git']]])
             }
         }
         stage('Debug') {
             steps {
-                script {
-                     Debugging step Print branch information
-                    bat 'git branch -a'
-                    bat 'git log --oneline'
-                }
+                echo 'Debugging step: Print branch information'
+                bat 'git branch -a'
+                bat 'git log --oneline'
             }
         }
         stage('Build') {
             steps {
-                 Execute Maven build
                 bat 'mvn clean package'
             }
         }
         stage('Test') {
             steps {
-                 Execute Maven tests
                 bat 'mvn test'
             }
         }
